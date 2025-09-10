@@ -1,0 +1,43 @@
+{
+  "name": "icu-message-utility-types",
+  "description": "TypeScript utility types for extracting argument types from ICU message strings.",
+  "version": "0.1.0",
+  "license": "MIT",
+  "main": "",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run --typecheck",
+    "dev": "npm run test -- --watch",
+    "lint": "eslint . --ext .ts --max-warnings=0",
+    "lint:fix": "npm run lint -- --fix",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
+    "prepare": "husky",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.35.0",
+    "eslint": "9.35.0",
+    "eslint-config-prettier": "10.1.8",
+    "husky": "9.1.7",
+    "lint-staged": "16.1.6",
+    "prettier": "3.6.2",
+    "tsup": "8.5.0",
+    "typescript": "5.9.2",
+    "typescript-eslint": "8.43.0",
+    "vitest": "3.2.4"
+  },
+  "lint-staged": {
+    "*.{ts,js,mjs,mts}": [
+      "eslint --max-warnings=0 --fix",
+      "prettier --write"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
+  }
+}
