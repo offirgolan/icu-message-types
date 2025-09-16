@@ -24,13 +24,16 @@ type Sanitize<S extends string> = StripEscaped<StripWhitespace<S>>;
  * Extract ICU message arguments from the given string.
  */
 type ExtractArguments<S extends string> =
-  /* Handle {arg0,selectordinal,...}} since it has nested {} */
-  S extends `${infer A}{${infer B}}}${infer C}`
-    ? ExtractArguments<A> | _ExtractComplexArguments<B> | ExtractArguments<C>
-    : /* Handle remaining arguments {arg0}, {arg0, number}, {arg0, date, short}, etc. */
-      S extends `${infer A}{${infer B}}${infer C}`
-      ? ExtractArguments<A> | B | ExtractArguments<C>
-      : never;
+  /* Handle multi-nested arguments (1 level)  */
+  S extends `${infer A}{{${infer B}}}}${infer C}`
+    ? ExtractArguments<`${A}{}${C}`> | ExtractArguments<`{${B}}}`>
+    : /* Handle {arg0,selectordinal,...}} since it has nested {} */
+      S extends `${infer A}{${infer B}}}${infer C}`
+      ? ExtractArguments<A> | _ExtractComplexArguments<B> | ExtractArguments<C>
+      : /* Handle remaining arguments {arg0}, {arg0, number}, {arg0, date, short}, etc. */
+        S extends `${infer A}{${infer B}}${infer C}`
+        ? ExtractArguments<A> | B | ExtractArguments<C>
+        : never;
 
 /**
  * Handle complex type argument extraction (i.e plural, select, and selectordinal) which

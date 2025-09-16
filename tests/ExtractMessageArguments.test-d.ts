@@ -140,3 +140,52 @@ test('Quoting / Escaping', () => {
     ExtractMessageArguments<`These are not interpolations: '{word1} {word2}', but these are {word3} {word4}`>
   >().toEqualTypeOf<{ word3: string; word4: string }>();
 });
+
+test('Nested Complex Arguments', () => {
+  expectTypeOf<
+    ExtractMessageArguments<`{gender, select,
+      female {{num_items, select,
+          one {She has one item.}
+          other {She has # items.}
+      } }
+      male {{num_items, select,
+          one {He has one item.}
+          other {He has # items.}
+      }}
+      other {{num_items, select,
+          one {They have one item.}
+          other {They have # items.}
+      }}
+    }`>
+  >().toEqualTypeOf<{
+    gender: ({} & string) | 'female' | 'male';
+    num_items: ({} & string) | 'one';
+  }>();
+
+  expectTypeOf<
+    ExtractMessageArguments<`{gender_of_host, select,
+      female {
+        {num_guests, plural, offset:1
+          =0 {{host} does not give a party.}
+          =1 {{host} invites {guest} to her party.}
+          =2 {{host} invites {guest} and one other person to her party.}
+          other {{host} invites {guest} and # other people to her party.}}}
+      male {
+        {num_guests, plural, offset:1
+          =0 {{host} does not give a party.}
+          =1 {{host} invites {guest} to his party.}
+          =2 {{host} invites {guest} and one other person to his party.}
+          other {{host} invites {guest} and # other people to his party.}}}
+      other {
+        {num_guests, plural, offset:1
+          =0 {{host} does not give a party.}
+          =1 {{host} invites {guest} to their party.}
+          =2 {{host} invites {guest} and one other person to their party.}
+          other {{host} invites {guest} and # other people to their party.}}}
+    }`>
+  >().toEqualTypeOf<{
+    gender_of_host: ({} & string) | 'female' | 'male';
+    num_guests: number;
+    host: string;
+  }>();
+});
