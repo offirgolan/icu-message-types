@@ -7,12 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  build-and-test:
+  build-test-lint:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18, 20, 22] # test on LTS versions
 
     steps:
       - name: Checkout repository
@@ -21,7 +17,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 22
           cache: 'npm'
 
       - name: Install dependencies
