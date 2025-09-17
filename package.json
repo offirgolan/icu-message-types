@@ -1,0 +1,59 @@
+{
+  "name": "icu-message-types",
+  "description": "TypeScript utility types for ICU message strings.",
+  "version": "0.1.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/offirgolan/icu-message-types"
+  },
+  "author": {
+    "name": "Offir Golan",
+    "email": "offirgolan@gmail.com"
+  },
+  "types": "src/index.d.ts",
+  "files": [
+    "src",
+    "LICENSE"
+  ],
+  "keywords": [
+    "typescript",
+    "ts",
+    "types",
+    "utility",
+    "util",
+    "utilities",
+    "icu",
+    "i18n"
+  ],
+  "scripts": {
+    "test:tsc": "tsc",
+    "test:vitest": "vitest run --typecheck",
+    "test": "npm run test:tsc && npm run test:vitest",
+    "lint": "eslint . --ext .ts --max-warnings=0",
+    "lint:fix": "npm run lint -- --fix",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.35.0",
+    "eslint": "9.35.0",
+    "eslint-config-prettier": "10.1.8",
+    "husky": "9.1.7",
+    "lint-staged": "16.1.6",
+    "prettier": "3.6.2",
+    "typescript": "5.9.2",
+    "typescript-eslint": "8.43.0",
+    "vitest": "3.2.4"
+  },
+  "lint-staged": {
+    "*.{ts,js,mjs,mts}": [
+      "eslint --max-warnings=0 --fix",
+      "prettier --write"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
+  }
+}
