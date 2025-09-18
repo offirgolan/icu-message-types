@@ -52,17 +52,17 @@ Extracts the argument types from an ICU message string.
 
 | Format          | TypeScript Type                                 | Example                                               |
 | --------------- | ----------------------------------------------- | ----------------------------------------------------- |
-| `string`        | `string \| number \| boolean`                   | `{name}`                                              |
-| `number`        | ``number \| `${number}`  ``                     | `{count, number, ...}`                                |
-| `date`          | ``Date \| number \| `${number}`  ``             | `{date, date, short}`                                 |
-| `time`          | ``Date \| number \| `${number}`  ``             | `{time, time, medium}`                                |
-| `plural`        | ``number \| `${number}`  ``                     | `{count, plural, one {...} other {...}}`              |
-| `selectordinal` | ``number \| `${number}`  ``                     | `{position, selectordinal, one {#st} other {#th}}`    |
+| `string`        | `string \| number \| boolean \| null`           | `{name}`                                              |
+| `number`        | ``number \| `${number}` \| null  ``             | `{count, number, ...}`                                |
+| `date`          | ``Date \| number \| `${number}` \| null  ``     | `{date, date, short}`                                 |
+| `time`          | ``Date \| number \| `${number}` \| null  ``     | `{time, time, medium}`                                |
+| `plural`        | ``number \| `${number}`  \| null ``             | `{count, plural, one {...} other {...}}`              |
+| `selectordinal` | ``number \| `${number}`  \| null ``             | `{position, selectordinal, one {#st} other {#th}}`    |
 | `select`        | `union \| string \| number \| boolean \| null ` | `{theme, select, light {...} dark {...} other {...}}` |
 
 #### Additional Features
 
-- **Enhanced Value Types**: Non-formatted arguments accept `string | number | boolean` for more flexible usage
+- **Enhanced Value Types**: Non-formatted arguments accept `string | number | boolean | null` for more flexible usage
 - **String Number Support**: Numeric formats accept both `number` and template literal `\`${number}\`` types
 - **Comprehensive Select Matching**: Select arguments with `other` clauses support `string`, `number`, `boolean`, and `null`
 - **Literal Type Transformation**: Select keys are intelligently transformed (e.g., `'123'` becomes `'123' | 123`, `'true'` becomes `'true' | true`)
@@ -74,35 +74,35 @@ Extracts the argument types from an ICU message string.
 
 ```typescript
 type Args = ICUMessageArguments<'Hello, {name}!'>;
-// Result: { name: string | number | boolean }
+// Result: { name: string | number | boolean | null }
 
 type MultipleArgs = ICUMessageArguments<'Hello, {firstName} {lastName}!'>;
-// Result: { firstName: string | number | boolean; lastName: string | number | boolean }
+// Result: { firstName: string | number | boolean | null; lastName: string | number | boolean | null }
 ```
 
 #### Number Arguments
 
 ```typescript
 type NumberArg = ICUMessageArguments<'I have {count, number} cats'>;
-// Result: { count: number | `${number}` }
+// Result: { count: number | `${number}` | null }
 
 type CurrencyArg =
   ICUMessageArguments<'Price: {price, number, ::currency/USD}'>;
-// Result: { price: number | `${number}` }
+// Result: { price: number | `${number}` | null }
 
 type PercentArg =
   ICUMessageArguments<'Progress: {progress, number, ::percent}'>;
-// Result: { progress: number | `${number}` }
+// Result: { progress: number | `${number}` | null }
 ```
 
 #### Date and Time Arguments
 
 ```typescript
 type DateArg = ICUMessageArguments<'Event date: {date, date, medium}'>;
-// Result: { date: Date | number | `${number}` }
+// Result: { date: Date | number | `${number}` | null }
 
 type TimeArg = ICUMessageArguments<'Meeting at {time, time, short}'>;
-// Result: { time: Date | number | `${number}` }
+// Result: { time: Date | number | `${number}` | null }
 ```
 
 #### Select Arguments
@@ -130,7 +130,7 @@ type PluralArg = ICUMessageArguments<`{count, plural,
   one {One item}
   other {# items}
 }`>;
-// Result: { count: number | `${number}` }
+// Result: { count: number | `${number}` | null }
 ```
 
 #### Selectordinal Arguments
@@ -142,7 +142,7 @@ type OrdinalArg = ICUMessageArguments<`{position, selectordinal,
   few {#rd place}
   other {#th place}
 }`>;
-// Result: { position: number | `${number}` }
+// Result: { position: number | `${number}` | null }
 ```
 
 #### Nested Arguments
