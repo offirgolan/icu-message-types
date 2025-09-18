@@ -53,18 +53,18 @@ Extracts the argument types from an ICU message string.
 | Format          | TypeScript Type                                             | Example                                               |
 | --------------- | ----------------------------------------------------------- | ----------------------------------------------------- |
 | `string`        | `string \| number \| boolean`                               | `{name}`                                              |
-| `number`        | `number \| \`${number}\``                                   | `{count, number, ...}`                                |
-| `date`          | `Date \| number \| \`${number}\``                           | `{date, date, short}`                                 |
-| `time`          | `Date \| number \| \`${number}\``                           | `{time, time, medium}`                                |
-| `plural`        | `number \| \`${number}\``                                   | `{count, plural, one {...} other {...}}`              |
-| `selectordinal` | `number \| \`${number}\``                                   | `{position, selectordinal, one {#st} other {#th}}`    |
+| `number`        | ``number \| `${number}`  ``                                 | `{count, number, ...}`                                |
+| `date`          | ``Date \| number \| `${number}`  ``                         | `{date, date, short}`                                 |
+| `time`          | ``Date \| number \| `${number}`  ``                         | `{time, time, medium}`                                |
+| `plural`        | ``number \| `${number}`  ``                                 | `{count, plural, one {...} other {...}}`              |
+| `selectordinal` | ``number \| `${number}`  ``                                 | `{position, selectordinal, one {#st} other {#th}}`    |
 | `select`        | `union \| string \| number \| boolean \| null \| undefined` | `{theme, select, light {...} dark {...} other {...}}` |
 
 #### Additional Features
 
 - **Enhanced Value Types**: Non-formatted arguments accept `string | number | boolean` for more flexible usage
 - **String Number Support**: Numeric formats accept both `number` and template literal `\`${number}\`` types
-- **Comprehensive Select Matching**: Select arguments with `other` clauses support strings, numbers, booleans, null, and undefined
+- **Comprehensive Select Matching**: Select arguments with `other` clauses support `string`, `number`, `boolean`, `null`, and `undefined`
 - **Literal Type Transformation**: Select keys are intelligently transformed (e.g., `'123'` becomes `'123' | 123`, `'true'` becomes `'true' | true`)
 - **Escaped content**: Properly handles quoted/escaped text that shouldn't be parsed as arguments
 - **Nested messages**: Supports complex nested structures
