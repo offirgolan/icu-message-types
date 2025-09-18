@@ -1,18 +1,19 @@
 import { expectTypeOf, test } from 'vitest';
 import type { ICUMessageArguments } from '../src/message-arguments';
 
-type Other = ({} & string) | ({} & number) | boolean | undefined | null;
+type SelectOtherValue = ({} & string) | ({} & number) | boolean | null;
+type UnformattedValue = string | number | boolean;
 
 test('{string}', () => {
   expectTypeOf<ICUMessageArguments<`hello {name}`>>().toEqualTypeOf<{
-    name: string | number | boolean;
+    name: UnformattedValue;
   }>();
 
   expectTypeOf<
     ICUMessageArguments<`hello {firstName} {lastName}`>
   >().toEqualTypeOf<{
-    firstName: string | number | boolean;
-    lastName: string | number | boolean;
+    firstName: UnformattedValue;
+    lastName: UnformattedValue;
   }>();
 });
 
@@ -58,7 +59,7 @@ test('{select}', () => {
       other {The interface will use default colors.}
     }`>
   >().toEqualTypeOf<{
-    theme: 'light' | 'dark' | Other;
+    theme: 'light' | 'dark' | SelectOtherValue;
   }>();
 
   expectTypeOf<
@@ -74,30 +75,30 @@ test('{select}', () => {
       other {No taxes apply.}
     }`>
   >().toEqualTypeOf<{
-    isTaxed: 'yes' | ({} & string) | ({} & number) | boolean | undefined | null;
+    isTaxed: 'yes' | SelectOtherValue;
     tax: number | `${number}`;
-    person: string | number | boolean;
+    person: UnformattedValue;
   }>();
 
   // Select with only "other"
   expectTypeOf<
     ICUMessageArguments<`{choice, select, other {Only other option}}`>
   >().toEqualTypeOf<{
-    choice: ({} & string) | ({} & number) | boolean | undefined | null;
+    choice: SelectOtherValue;
   }>();
 
   // Select with numeric-looking keys
   expectTypeOf<
     ICUMessageArguments<`{num, select, 123 {Numeric key} other {Other}}`>
   >().toEqualTypeOf<{
-    num: '123' | 123 | Other;
+    num: '123' | 123 | SelectOtherValue;
   }>();
 
   // Select with special character keys
   expectTypeOf<
     ICUMessageArguments<`{special, select, key-with-dashes {Dashed} key_with_underscores {Underscored} other {Other}}`>
   >().toEqualTypeOf<{
-    special: 'key-with-dashes' | 'key_with_underscores' | Other;
+    special: 'key-with-dashes' | 'key_with_underscores' | SelectOtherValue;
   }>();
 });
 
@@ -162,7 +163,17 @@ test('Malformed Inputs', () => {
 test('Unknown Format', () => {
   expectTypeOf<
     ICUMessageArguments<`hello {firstName, foo} {middleName} {lastName, bar}`>
-  >().toEqualTypeOf<{ middleName: string | number | boolean }>();
+  >().toEqualTypeOf<{ middleName: UnformattedValue }>();
+});
+
+test('Unions', () => {
+  expectTypeOf<
+    ICUMessageArguments<`hello {foo} {bar}` | `hi {foo} {baz, number}`>
+  >().toEqualTypeOf<{
+    foo: UnformattedValue;
+    bar: UnformattedValue;
+    baz: number | `${number}`;
+  }>();
 });
 
 test('Rich Text Formatting', () => {
@@ -197,19 +208,19 @@ test('Quoting / Escaping', () => {
   expectTypeOf<
     ICUMessageArguments<`These are not interpolations: '{word1} {word2}', but these are {word3} {word4}`>
   >().toEqualTypeOf<{
-    word3: string | number | boolean;
-    word4: string | number | boolean;
+    word3: UnformattedValue;
+    word4: UnformattedValue;
   }>();
 
   // Multiple consecutive quotes
   expectTypeOf<
     ICUMessageArguments<`This ''isn''''t'' obvious with {name}.`>
-  >().toEqualTypeOf<{ name: string | number | boolean }>();
+  >().toEqualTypeOf<{ name: UnformattedValue }>();
 
   // Mixed quoted and unquoted content
   expectTypeOf<
     ICUMessageArguments<`Start '{not_arg}' middle {real_arg} end '{not_arg2}'`>
-  >().toEqualTypeOf<{ real_arg: string | number | boolean }>();
+  >().toEqualTypeOf<{ real_arg: UnformattedValue }>();
 
   // Quotes around entire message
   expectTypeOf<
@@ -239,8 +250,8 @@ test('Nested Complex Arguments', () => {
       }}
     }`>
   >().toEqualTypeOf<{
-    theme: Other | 'dark' | 'light';
-    num_items: Other | 'one';
+    theme: SelectOtherValue | 'dark' | 'light';
+    num_items: SelectOtherValue | 'one';
   }>();
 
   expectTypeOf<
@@ -268,10 +279,10 @@ test('Nested Complex Arguments', () => {
         }
   }`>
   >().toEqualTypeOf<{
-    role_of_host: Other | 'organizer' | 'participant';
+    role_of_host: SelectOtherValue | 'organizer' | 'participant';
     num_guests: number | `${number}`;
-    host: string | number | boolean;
-    guest: string | number | boolean;
+    host: UnformattedValue;
+    guest: UnformattedValue;
   }>();
 
   expectTypeOf<
@@ -303,10 +314,10 @@ test('Nested Complex Arguments', () => {
           other {{host} invites {guest} and # other people to attend.}}}
     }`>
   >().toEqualTypeOf<{
-    role_of_host: Other | 'organizer' | 'participant';
+    role_of_host: SelectOtherValue | 'organizer' | 'participant';
     num_guests: number | `${number}`;
-    host: string | number | boolean;
-    guest: string | number | boolean;
+    host: UnformattedValue;
+    guest: UnformattedValue;
     year: number | `${number}`;
   }>();
 });
@@ -316,28 +327,28 @@ test('Enhanced Select Transformations', () => {
   expectTypeOf<
     ICUMessageArguments<`{isActive, select, true {Active} false {Inactive} other {Unknown}}`>
   >().toEqualTypeOf<{
-    isActive: 'true' | true | 'false' | false | Other;
+    isActive: 'true' | 'false' | SelectOtherValue;
   }>();
 
   // Test number literal transformations
   expectTypeOf<
     ICUMessageArguments<`{status, select, 0 {Zero} 1 {One} 42 {Forty-two} other {Other number}}`>
   >().toEqualTypeOf<{
-    status: '0' | 0 | '1' | 1 | '42' | 42 | Other;
+    status: '0' | 0 | '1' | 1 | '42' | 42 | SelectOtherValue;
   }>();
 
   // Test decimal number transformations
   expectTypeOf<
     ICUMessageArguments<`{score, select, 3.14 {Pi} 2.71 {E} other {Other}}`>
   >().toEqualTypeOf<{
-    score: '3.14' | 3.14 | '2.71' | 2.71 | Other;
+    score: '3.14' | 3.14 | '2.71' | 2.71 | SelectOtherValue;
   }>();
 
   // Test negative number transformations
   expectTypeOf<
     ICUMessageArguments<`{temp, select, -10 {Cold} 0 {Freezing} other {Other}}`>
   >().toEqualTypeOf<{
-    temp: '-10' | -10 | '0' | 0 | Other;
+    temp: '-10' | -10 | '0' | 0 | SelectOtherValue;
   }>();
 
   // Test mixed literal types without 'other'
@@ -369,9 +380,7 @@ test('Enhanced Select Transformations', () => {
   >().toEqualTypeOf<{
     value:
       | 'true'
-      | true
       | 'false'
-      | false
       | '0'
       | 0
       | '1'
@@ -381,7 +390,7 @@ test('Enhanced Select Transformations', () => {
       | '3.14'
       | 3.14
       | 'someString'
-      | Other;
+      | SelectOtherValue;
   }>();
 
   // Test select without 'other' but with mixed types
@@ -405,7 +414,7 @@ test('Enhanced Select Transformations', () => {
       other {No inner}
     }`>
   >().toEqualTypeOf<{
-    outer: 'true' | true | 'false' | false | Other;
-    inner: '1' | 1 | '2' | 2 | 'on' | 'off' | Other;
+    outer: 'true' | 'false' | SelectOtherValue;
+    inner: '1' | 1 | '2' | 2 | 'on' | 'off' | SelectOtherValue;
   }>();
 });

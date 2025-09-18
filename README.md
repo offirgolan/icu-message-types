@@ -35,7 +35,7 @@ type Args1 = ICUMessageArguments<`{theme, select,
   dark {The interface will be dark}
   other {The interface will use default colors}
 }`>;
-// Result: { theme: 'light' | 'dark' | ({} & string) | ({} & number) | boolean | undefined | null }
+// Result: { theme: 'light' | 'dark' | ({} & string) | ({} & number) | boolean | null }
 
 // Extract tag names
 type Tags = ICUMessageTags<'Click <link>here</link> to continue'>;
@@ -50,21 +50,21 @@ Extracts the argument types from an ICU message string.
 
 #### Message Arguments
 
-| Format          | TypeScript Type                                             | Example                                               |
-| --------------- | ----------------------------------------------------------- | ----------------------------------------------------- |
-| `string`        | `string \| number \| boolean`                               | `{name}`                                              |
-| `number`        | ``number \| `${number}`  ``                                 | `{count, number, ...}`                                |
-| `date`          | ``Date \| number \| `${number}`  ``                         | `{date, date, short}`                                 |
-| `time`          | ``Date \| number \| `${number}`  ``                         | `{time, time, medium}`                                |
-| `plural`        | ``number \| `${number}`  ``                                 | `{count, plural, one {...} other {...}}`              |
-| `selectordinal` | ``number \| `${number}`  ``                                 | `{position, selectordinal, one {#st} other {#th}}`    |
-| `select`        | `union \| string \| number \| boolean \| null \| undefined` | `{theme, select, light {...} dark {...} other {...}}` |
+| Format          | TypeScript Type                                 | Example                                               |
+| --------------- | ----------------------------------------------- | ----------------------------------------------------- |
+| `string`        | `string \| number \| boolean`                   | `{name}`                                              |
+| `number`        | ``number \| `${number}`  ``                     | `{count, number, ...}`                                |
+| `date`          | ``Date \| number \| `${number}`  ``             | `{date, date, short}`                                 |
+| `time`          | ``Date \| number \| `${number}`  ``             | `{time, time, medium}`                                |
+| `plural`        | ``number \| `${number}`  ``                     | `{count, plural, one {...} other {...}}`              |
+| `selectordinal` | ``number \| `${number}`  ``                     | `{position, selectordinal, one {#st} other {#th}}`    |
+| `select`        | `union \| string \| number \| boolean \| null ` | `{theme, select, light {...} dark {...} other {...}}` |
 
 #### Additional Features
 
 - **Enhanced Value Types**: Non-formatted arguments accept `string | number | boolean` for more flexible usage
 - **String Number Support**: Numeric formats accept both `number` and template literal `\`${number}\`` types
-- **Comprehensive Select Matching**: Select arguments with `other` clauses support `string`, `number`, `boolean`, `null`, and `undefined`
+- **Comprehensive Select Matching**: Select arguments with `other` clauses support `string`, `number`, `boolean`, and `null`
 - **Literal Type Transformation**: Select keys are intelligently transformed (e.g., `'123'` becomes `'123' | 123`, `'true'` becomes `'true' | true`)
 - **Escaped content**: Properly handles quoted/escaped text that shouldn't be parsed as arguments
 - **Nested messages**: Supports complex nested structures
@@ -113,7 +113,7 @@ type SelectArg = ICUMessageArguments<`{theme, select,
   dark {The interface will be dark}
   other {The interface will use default colors}
 }`>;
-// Result: { theme: 'light' | 'dark' | ({} & string) | ({} & number) | boolean | undefined | null }
+// Result: { theme: 'light' | 'dark' | ({} & string) | ({} & number) | boolean | null }
 
 type SelectWithoutOther = ICUMessageArguments<`{status, select,
   active {Currently active}
@@ -168,7 +168,7 @@ type NestedArgs = ICUMessageArguments<`{theme, select,
     }
   }
 }`>;
-// Result: { theme: 'dark' | 'light' | ({} & string) | ({} & number) | boolean | undefined | null; count: number | `${number}` }
+// Result: { theme: 'dark' | 'light' | ({} & string) | ({} & number) | boolean | null; count: number | `${number}` }
 ```
 
 ### `ICUMessageTags<T>`

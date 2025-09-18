@@ -22,13 +22,18 @@ type Value<T extends MessageArgumentFormat> = T extends
   : T extends 'date' | 'time'
     ? Date | number | `${number}`
     : T extends 'select'
-      ? string | number | boolean | null | undefined
+      ? string | number | boolean | null
       : never;
 
 /**
  * Value type for non-formatted arguments (e.g. `{firstName}`)
  */
-type NonFormattedValue = string | number | boolean;
+type UnformattedValue = string | number | boolean;
+
+/**
+ * Value type for Select's "other" matcher argument
+ */
+type SelectOtherValue = ({} & string) | ({} & number) | boolean | null;
 
 /**
  * Message argument tuple with the key and value.
@@ -80,7 +85,7 @@ type ExtractSimpleArgument<S extends string> = S extends
   ? Format extends MessageArgumentFormat
     ? MessageArgument<Name, Value<Format>>
     : never
-  : MessageArgument<S, NonFormattedValue>;
+  : MessageArgument<S, UnformattedValue>;
 
 /**
  * Handle complex type argument extraction (i.e plural, select, and selectordinal) which
@@ -137,7 +142,7 @@ type ExtractSelectMatches<
  * - `'1234'`: `'1234' | 1234`
  */
 type TransformSelectMatches<S extends string> = S extends 'other'
-  ? ({} & string) | ({} & number) | boolean | undefined | null
+  ? SelectOtherValue
   : S extends `${infer P extends boolean | number}`
     ? S | P
     : S;
