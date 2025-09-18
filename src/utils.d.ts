@@ -10,11 +10,6 @@ export type Replace<
   : S;
 
 /**
- * Pop the first item out of an array
- */
-export type Pop<T extends any[]> = T extends [...infer R, any] ? R : [];
-
-/**
  * Utility type to remove all spaces, new lines, and tabs from the provided string.
  */
 export type StripWhitespace<S extends string> = Replace<
@@ -22,6 +17,11 @@ export type StripWhitespace<S extends string> = Replace<
   ' ',
   ''
 >;
+
+/**
+ * Pop the first item out of an array
+ */
+export type Pop<T extends any[]> = T extends [...infer R, any] ? R : [];
 
 /**
  * Consume characters until the matching closing brace for an already-seen "{"
