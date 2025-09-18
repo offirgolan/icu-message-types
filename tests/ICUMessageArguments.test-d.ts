@@ -2,7 +2,9 @@ import { expectTypeOf, test } from 'vitest';
 import type { ICUMessageArguments } from '../src/message-arguments';
 
 type SelectOtherValue = ({} & string) | ({} & number) | boolean | null;
-type UnformattedValue = string | number | boolean;
+type UnformattedValue = string | number | boolean | null;
+type NumberFormattedValue = number | `${number}` | null;
+type DateTimeFormattedValue = Date | NumberFormattedValue;
 
 test('{string}', () => {
   expectTypeOf<ICUMessageArguments<`hello {name}`>>().toEqualTypeOf<{
@@ -20,35 +22,35 @@ test('{string}', () => {
 test('{number}', () => {
   expectTypeOf<
     ICUMessageArguments<`I have {num, number} cats.`>
-  >().toEqualTypeOf<{ num: number | `${number}` }>();
+  >().toEqualTypeOf<{ num: NumberFormattedValue }>();
 
   expectTypeOf<
     ICUMessageArguments<`The price of this bagel is {num, number, ::sign-always compact-short currency/GBP}`>
-  >().toEqualTypeOf<{ num: number | `${number}` }>();
+  >().toEqualTypeOf<{ num: NumberFormattedValue }>();
 
   expectTypeOf<
     ICUMessageArguments<`Almost {num, number, ::percent} of them are green.`>
-  >().toEqualTypeOf<{ num: number | `${number}` }>();
+  >().toEqualTypeOf<{ num: NumberFormattedValue }>();
 
   expectTypeOf<
     ICUMessageArguments<`The duration is {num, number, ::.##} seconds`>
-  >().toEqualTypeOf<{ num: number | `${number}` }>();
+  >().toEqualTypeOf<{ num: NumberFormattedValue }>();
 
   expectTypeOf<
     ICUMessageArguments<`The very precise number is {num, number, ::.00}`>
-  >().toEqualTypeOf<{ num: number | `${number}` }>();
+  >().toEqualTypeOf<{ num: NumberFormattedValue }>();
 });
 
 test('{date}', () => {
   expectTypeOf<
     ICUMessageArguments<`Sale begins {start, date, medium}`>
-  >().toEqualTypeOf<{ start: Date | number | `${number}` }>();
+  >().toEqualTypeOf<{ start: DateTimeFormattedValue }>();
 });
 
 test('{time}', () => {
   expectTypeOf<
     ICUMessageArguments<`Coupon expires at {expire, time, short}`>
-  >().toEqualTypeOf<{ expire: Date | number | `${number}` }>();
+  >().toEqualTypeOf<{ expire: DateTimeFormattedValue }>();
 });
 
 test('{select}', () => {
@@ -76,7 +78,7 @@ test('{select}', () => {
     }`>
   >().toEqualTypeOf<{
     isTaxed: 'yes' | SelectOtherValue;
-    tax: number | `${number}`;
+    tax: NumberFormattedValue;
     person: UnformattedValue;
   }>();
 
@@ -108,7 +110,7 @@ test('{plural}', () => {
       one {Cart: {itemCount, number} item}
       other {Cart: {itemCount, number} items}
     }`>
-  >().toEqualTypeOf<{ itemCount: number | `${number}` }>();
+  >().toEqualTypeOf<{ itemCount: NumberFormattedValue }>();
 
   expectTypeOf<
     ICUMessageArguments<`{itemCount, plural,
@@ -116,7 +118,7 @@ test('{plural}', () => {
       one {You have {itemCount, number} item.}
       other {You have {itemCount, number} items.}
     }`>
-  >().toEqualTypeOf<{ itemCount: number | `${number}` }>();
+  >().toEqualTypeOf<{ itemCount: NumberFormattedValue }>();
 
   expectTypeOf<
     ICUMessageArguments<`{itemCount, plural,
@@ -124,7 +126,7 @@ test('{plural}', () => {
       one {You have # item.}
       other {You have # items.}
     }`>
-  >().toEqualTypeOf<{ itemCount: number | `${number}` }>();
+  >().toEqualTypeOf<{ itemCount: NumberFormattedValue }>();
 });
 
 test('{selectordinal}', () => {
@@ -135,7 +137,7 @@ test('{selectordinal}', () => {
       few {#rd}
       other {#th}
     } birthday!`>
-  >().toEqualTypeOf<{ year: number | `${number}` }>();
+  >().toEqualTypeOf<{ year: NumberFormattedValue }>();
 });
 
 test('No Arguments', () => {
@@ -172,7 +174,7 @@ test('Unions', () => {
   >().toEqualTypeOf<{
     foo: UnformattedValue;
     bar: UnformattedValue;
-    baz: number | `${number}`;
+    baz: NumberFormattedValue;
   }>();
 });
 
@@ -181,8 +183,8 @@ test('Rich Text Formatting', () => {
     ICUMessageArguments<`Our price is <boldThis>{price, number, ::currency/USD precision-integer}</boldThis>
 with <link>{pct, number, ::percent} discount</link>`>
   >().toEqualTypeOf<{
-    price: number | `${number}`;
-    pct: number | `${number}`;
+    price: NumberFormattedValue;
+    pct: NumberFormattedValue;
   }>();
 });
 
@@ -280,7 +282,7 @@ test('Nested Complex Arguments', () => {
   }`>
   >().toEqualTypeOf<{
     role_of_host: SelectOtherValue | 'organizer' | 'participant';
-    num_guests: number | `${number}`;
+    num_guests: NumberFormattedValue;
     host: UnformattedValue;
     guest: UnformattedValue;
   }>();
@@ -315,10 +317,10 @@ test('Nested Complex Arguments', () => {
     }`>
   >().toEqualTypeOf<{
     role_of_host: SelectOtherValue | 'organizer' | 'participant';
-    num_guests: number | `${number}`;
+    num_guests: NumberFormattedValue;
     host: UnformattedValue;
     guest: UnformattedValue;
-    year: number | `${number}`;
+    year: NumberFormattedValue;
   }>();
 });
 

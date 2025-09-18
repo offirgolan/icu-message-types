@@ -18,9 +18,9 @@ type Value<T extends MessageArgumentFormat> = T extends
   | 'number'
   | 'plural'
   | 'selectordinal'
-  ? number | `${number}`
+  ? number | `${number}` | null
   : T extends 'date' | 'time'
-    ? Date | number | `${number}`
+    ? Date | number | `${number}` | null
     : T extends 'select'
       ? string | number | boolean | null
       : never;
@@ -28,7 +28,7 @@ type Value<T extends MessageArgumentFormat> = T extends
 /**
  * Value type for non-formatted arguments (e.g. `{firstName}`)
  */
-type UnformattedValue = string | number | boolean;
+type UnformattedValue = string | number | boolean | null;
 
 /**
  * Value type for Select's "other" matcher argument
