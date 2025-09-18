@@ -15,10 +15,10 @@ export type Replace<
 export type Pop<T extends any[]> = T extends [...infer R, any] ? R : [];
 
 /**
- * Utility type to remove all spaces and new lines from the provided string.
+ * Utility type to remove all spaces, new lines, and tabs from the provided string.
  */
 export type StripWhitespace<S extends string> = Replace<
-  Replace<S, '\n', ''>,
+  Replace<Replace<S, '\t', ''>, '\n', ''>,
   ' ',
   ''
 >;

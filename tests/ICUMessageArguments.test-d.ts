@@ -127,22 +127,25 @@ test('{selectordinal}', () => {
 });
 
 test('No Arguments', () => {
-  expectTypeOf<ICUMessageArguments<`hello world`>>().toEqualTypeOf<{}>();
-  expectTypeOf<ICUMessageArguments<`hello, world`>>().toEqualTypeOf<{}>();
+  expectTypeOf<ICUMessageArguments<``>>().toEqualTypeOf<never>();
+  expectTypeOf<ICUMessageArguments<`hello world`>>().toEqualTypeOf<never>();
+  expectTypeOf<ICUMessageArguments<`hello, world`>>().toEqualTypeOf<never>();
 });
 
 test('Malformed Inputs', () => {
   // Unclosed braces
-  expectTypeOf<ICUMessageArguments<`hello {name`>>().toEqualTypeOf<{}>();
-  expectTypeOf<ICUMessageArguments<`hello name}`>>().toEqualTypeOf<{}>();
+  expectTypeOf<ICUMessageArguments<`hello {name`>>().toEqualTypeOf<never>();
+  expectTypeOf<ICUMessageArguments<`hello name}`>>().toEqualTypeOf<never>();
 
   // Empty argument name
-  expectTypeOf<ICUMessageArguments<`hello {}`>>().toEqualTypeOf<{}>();
-  expectTypeOf<ICUMessageArguments<`hello {, number}`>>().toEqualTypeOf<{}>();
+  expectTypeOf<ICUMessageArguments<`hello {}`>>().toEqualTypeOf<never>();
+  expectTypeOf<
+    ICUMessageArguments<`hello {, number}`>
+  >().toEqualTypeOf<never>();
 
   // Invalid format syntax
-  expectTypeOf<ICUMessageArguments<`hello {name,}`>>().toEqualTypeOf<{}>();
-  expectTypeOf<ICUMessageArguments<`hello {name, }`>>().toEqualTypeOf<{}>();
+  expectTypeOf<ICUMessageArguments<`hello {name,}`>>().toEqualTypeOf<never>();
+  expectTypeOf<ICUMessageArguments<`hello {name, }`>>().toEqualTypeOf<never>();
 });
 
 test('Unknown Format', () => {
@@ -161,21 +164,21 @@ with <link>{pct, number, ::percent} discount</link>`>
 test('Quoting / Escaping', () => {
   expectTypeOf<
     ICUMessageArguments<`This is not an interpolation: '{word}`>
-  >().toEqualTypeOf<{}>();
+  >().toEqualTypeOf<never>();
 
   expectTypeOf<
     ICUMessageArguments<`These are not interpolations: '{word1} {word2}'`>
-  >().toEqualTypeOf<{}>();
+  >().toEqualTypeOf<never>();
 
-  expectTypeOf<ICUMessageArguments<`'<notATag>'`>>().toEqualTypeOf<{}>();
+  expectTypeOf<ICUMessageArguments<`'<notATag>'`>>().toEqualTypeOf<never>();
 
   expectTypeOf<
     ICUMessageArguments<`'<notATag>hello</notATag>'`>
-  >().toEqualTypeOf<{}>();
+  >().toEqualTypeOf<never>();
 
   expectTypeOf<
     ICUMessageArguments<`This '{isn''t}' obvious.`>
-  >().toEqualTypeOf<{}>();
+  >().toEqualTypeOf<never>();
 
   expectTypeOf<
     ICUMessageArguments<`These are not interpolations: '{word1} {word2}', but these are {word3} {word4}`>
@@ -194,12 +197,12 @@ test('Quoting / Escaping', () => {
   // Quotes around entire message
   expectTypeOf<
     ICUMessageArguments<`'Entire message is quoted with {arg} inside'`>
-  >().toEqualTypeOf<{}>();
+  >().toEqualTypeOf<never>();
 
   // Unclosed quotes
   expectTypeOf<
     ICUMessageArguments<`Unclosed quote '{arg}`>
-  >().toEqualTypeOf<{}>();
+  >().toEqualTypeOf<never>();
 });
 
 test('Nested Complex Arguments', () => {

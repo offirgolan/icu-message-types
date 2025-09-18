@@ -135,11 +135,18 @@ type ReplaceOtherArgument<S extends string> = S extends 'other'
   : S;
 
 /**
+ * Replaces an empty object with `never`.
+ */
+type NonEmptyObject<T extends Record<string, any>> =
+  T extends Record<string, never> ? never : T;
+
+/**
  * Create an object mapping the extracted key to its type.
  */
-type MapArguments<T extends MessageArgument<any, any>> = {
-  [K in T[0]]: Extract<T, MessageArgument<K, any>>[1];
-};
+type MapArguments<T extends MessageArgument<any, any> | never> =
+  NonEmptyObject<{
+    [K in T[0]]: Extract<T, MessageArgument<K, any>>[1];
+  }>;
 
 /**
  * Message arguments for an ICU message string.
@@ -154,6 +161,9 @@ type MapArguments<T extends MessageArgument<any, any>> = {
  *
  * type Args2 = ICUMessageArguments<`{type, select, A {Selected: A} B {Selected: B} other {Selected: Other}}`>
  * // => { type: 'A' | 'B' | ({} & string)}
+ *
+ * type Args3 = ICUMessageArguments<`Message with no arguments`>
+ * // => never
  * ```
  */
 export type ICUMessageArguments<T extends string> = MapArguments<
