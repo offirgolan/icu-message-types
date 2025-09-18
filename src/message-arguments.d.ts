@@ -18,20 +18,27 @@ type Value<T extends MessageArgumentFormat> = T extends
   | 'number'
   | 'plural'
   | 'selectordinal'
-  ? number
+  ? number | `${number}`
   : T extends 'date' | 'time'
-    ? Date | number
+    ? Date | number | `${number}`
     : T extends 'select'
-      ? string
+      ? string | number | boolean | null
       : never;
+
+/**
+ * Value type for non-formatted arguments (e.g. `{firstName}`)
+ */
+type UnformattedValue = string | number | boolean;
+
+/**
+ * Value type for Select's "other" matcher argument
+ */
+type SelectOtherValue = ({} & string) | ({} & number) | boolean | null;
 
 /**
  * Message argument tuple with the key and value.
  */
-type MessageArgument<
-  K extends string,
-  V extends Value<MessageArgumentFormat>,
-> = K extends '' ? never : [K, V];
+type MessageArgument<K extends string, V> = K extends '' ? never : [K, V];
 
 /**
  * Utility type to remove escaped characters.
@@ -78,7 +85,7 @@ type ExtractSimpleArgument<S extends string> = S extends
   ? Format extends MessageArgumentFormat
     ? MessageArgument<Name, Value<Format>>
     : never
-  : MessageArgument<S, string>;
+  : MessageArgument<S, UnformattedValue>;
 
 /**
  * Handle complex type argument extraction (i.e plural, select, and selectordinal) which
@@ -93,7 +100,7 @@ type ExtractComplexArgument<S extends string> =
           ?
               | MessageArgument<
                   Name,
-                  ReplaceOtherArgument<ExtractSelectMatches<Rest>>
+                  TransformSelectMatches<ExtractSelectMatches<Rest>>
                 >
               | ExtractNestedArguments<Rest>
           : never
@@ -128,11 +135,17 @@ type ExtractSelectMatches<
     Result | (S extends '' ? never : S);
 
 /**
- * Replace "other" with any string
+ * Transform select matches
+ * - `'other'`: any string, any number, boolean, undefined, or null
+ * - `'true'`: `'true' | true`
+ * - `'false'`: `'false' | false`
+ * - `'1234'`: `'1234' | 1234`
  */
-type ReplaceOtherArgument<S extends string> = S extends 'other'
-  ? {} & string
-  : S;
+type TransformSelectMatches<S extends string> = S extends 'other'
+  ? SelectOtherValue
+  : S extends `${infer P extends boolean | number}`
+    ? S | P
+    : S;
 
 /**
  * Replaces an empty object with `never`.
