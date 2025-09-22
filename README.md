@@ -35,7 +35,7 @@ type Args1 = ICUMessageArguments<`{theme, select,
   dark {The interface will be dark}
   other {The interface will use default colors}
 }`>;
-// Result: { theme: 'light' | 'dark' | ({} & string) | ({} & number) | boolean | null }
+// Result: { theme: 'light' | 'dark' | ({} & string) | ({} & number) | boolean | null | undefined }
 
 // Extract tag names
 type Tags = ICUMessageTags<'Click <link>here</link> to continue'>;
@@ -50,21 +50,21 @@ Extracts the argument types from an ICU message string.
 
 #### Message Arguments
 
-| Format          | TypeScript Type                                 | Example                                               |
-| --------------- | ----------------------------------------------- | ----------------------------------------------------- |
-| `string`        | `string \| number \| boolean \| null`           | `{name}`                                              |
-| `number`        | ``number \| `${number}` \| null  ``             | `{count, number, ...}`                                |
-| `date`          | ``Date \| number \| `${number}` \| null  ``     | `{date, date, short}`                                 |
-| `time`          | ``Date \| number \| `${number}` \| null  ``     | `{time, time, medium}`                                |
-| `plural`        | ``number \| `${number}`  \| null ``             | `{count, plural, one {...} other {...}}`              |
-| `selectordinal` | ``number \| `${number}`  \| null ``             | `{position, selectordinal, one {#st} other {#th}}`    |
-| `select`        | `union \| string \| number \| boolean \| null ` | `{theme, select, light {...} dark {...} other {...}}` |
+| Format          | TypeScript Type                                                                   | Example                                               |
+| --------------- | --------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| Unformatted     | `string \| number \| boolean \| Date \| null \| undefined`                        | `{name}`                                              |
+| `number`        | ``number \| `${number}` \| null \| undefined``                                    | `{count, number, ...}`                                |
+| `date`          | ``Date \| number \| `${number}` \| null \| undefined``                            | `{date, date, short}`                                 |
+| `time`          | ``Date \| number \| `${number}` \| null \| undefined``                            | `{time, time, medium}`                                |
+| `plural`        | ``number \| `${number}`  \| null \| undefined``                                   | `{count, plural, one {...} other {...}}`              |
+| `selectordinal` | ``number \| `${number}`  \| null \| undefined``                                   | `{position, selectordinal, one {#st} other {#th}}`    |
+| `select`        | `'light' \| 'dark' \| {} & string \| {} & number \| boolean \| null \| undefined` | `{theme, select, light {...} dark {...} other {...}}` |
 
 #### Additional Features
 
-- **Enhanced Value Types**: Non-formatted arguments accept `string | number | boolean | null` for more flexible usage
-- **String Number Support**: Numeric formats accept both `number` and template literal `\`${number}\`` types
-- **Comprehensive Select Matching**: Select arguments with `other` clauses support `string`, `number`, `boolean`, and `null`
+- **Enhanced Value Types**: Unformatted arguments accept `string | number | boolean | Date | undefined | null`
+- **String Number Support**: Numeric formats accept both `number` and template literal `` `${number}` ``
+- **Comprehensive Select Matching**: Select arguments with `other` clauses support `string`, `number`, `boolean`, `null`, and `undefined`
 - **Literal Type Transformation**: Select keys are intelligently transformed (e.g., `'123'` becomes `'123' | 123`, `'true'` becomes `'true' | true`)
 - **Escaped content**: Properly handles quoted/escaped text that shouldn't be parsed as arguments
 - **Nested messages**: Supports complex nested structures
@@ -74,35 +74,35 @@ Extracts the argument types from an ICU message string.
 
 ```typescript
 type Args = ICUMessageArguments<'Hello, {name}!'>;
-// Result: { name: string | number | boolean | null }
+// Result: { name: string | number | boolean | Date | null | undefined }
 
 type MultipleArgs = ICUMessageArguments<'Hello, {firstName} {lastName}!'>;
-// Result: { firstName: string | number | boolean | null; lastName: string | number | boolean | null }
+// Result: { firstName: string | number | boolean | Date | null | undefined; lastName: string | number | boolean | Date | null | undefined }
 ```
 
 #### Number Arguments
 
 ```typescript
 type NumberArg = ICUMessageArguments<'I have {count, number} cats'>;
-// Result: { count: number | `${number}` | null }
+// Result: { count: number | `${number}` | null | undefined }
 
 type CurrencyArg =
   ICUMessageArguments<'Price: {price, number, ::currency/USD}'>;
-// Result: { price: number | `${number}` | null }
+// Result: { price: number | `${number}` | null | undefined }
 
 type PercentArg =
   ICUMessageArguments<'Progress: {progress, number, ::percent}'>;
-// Result: { progress: number | `${number}` | null }
+// Result: { progress: number | `${number}` | null | undefined }
 ```
 
 #### Date and Time Arguments
 
 ```typescript
 type DateArg = ICUMessageArguments<'Event date: {date, date, medium}'>;
-// Result: { date: Date | number | `${number}` | null }
+// Result: { date: Date | number | `${number}` | null | undefined }
 
 type TimeArg = ICUMessageArguments<'Meeting at {time, time, short}'>;
-// Result: { time: Date | number | `${number}` | null }
+// Result: { time: Date | number | `${number}` | null | undefined }
 ```
 
 #### Select Arguments
@@ -113,7 +113,7 @@ type SelectArg = ICUMessageArguments<`{theme, select,
   dark {The interface will be dark}
   other {The interface will use default colors}
 }`>;
-// Result: { theme: 'light' | 'dark' | ({} & string) | ({} & number) | boolean | null }
+// Result: { theme: 'light' | 'dark' | ({} & string) | ({} & number) | boolean | null | undefined }
 
 type SelectWithoutOther = ICUMessageArguments<`{status, select,
   active {Currently active}
@@ -130,7 +130,7 @@ type PluralArg = ICUMessageArguments<`{count, plural,
   one {One item}
   other {# items}
 }`>;
-// Result: { count: number | `${number}` | null }
+// Result: { count: number | `${number}` | null | undefined }
 ```
 
 #### Selectordinal Arguments
@@ -142,7 +142,7 @@ type OrdinalArg = ICUMessageArguments<`{position, selectordinal,
   few {#rd place}
   other {#th place}
 }`>;
-// Result: { position: number | `${number}` | null }
+// Result: { position: number | `${number}` | null | undefined }
 ```
 
 #### Nested Arguments

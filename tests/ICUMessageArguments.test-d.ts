@@ -1,9 +1,14 @@
 import { expectTypeOf, test } from 'vitest';
 import type { ICUMessageArguments } from '../src/message-arguments';
 
-type SelectOtherValue = ({} & string) | ({} & number) | boolean | null;
-type UnformattedValue = string | number | boolean | null;
-type NumberFormattedValue = number | `${number}` | null;
+type SelectOtherValue =
+  | ({} & string)
+  | ({} & number)
+  | boolean
+  | null
+  | undefined;
+type UnformattedValue = string | number | boolean | Date | null | undefined;
+type NumberFormattedValue = number | `${number}` | null | undefined;
 type DateTimeFormattedValue = Date | NumberFormattedValue;
 
 test('{string}', () => {
